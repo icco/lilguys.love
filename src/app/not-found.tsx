@@ -2,13 +2,12 @@ import Link from "next/link"
 
 export default function NotFound() {
   return (
-    <main
-      id="main"
-      className="grid min-h-screen place-content-center gap-6 px-6 text-center"
-    >
-      <h1 className="text-3xl font-bold">Page not found</h1>
-      <Link className="link" href="/">
-        Back home
+    <main id="main" className="site-main filtered-empty">
+      <p className="eyebrow">A little lost?</p>
+      <h1>No lilguy here just yet.</h1>
+      <p>This page may have moved, or its little friend hasn’t arrived.</p>
+      <Link className="text-link" href="/archive">
+        Back to the collection →
       </Link>
     </main>
   )
