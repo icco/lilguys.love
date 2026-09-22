@@ -26,6 +26,11 @@ The UI uses Server Components and URL-based archive filters, with no client-side
 JavaScript needed for filtering. Main content pages and sitemap are dynamic to
 honor publication dates and daily rotation without scheduled builds.
 
+Production caches the validated collection and image dimensions once per server
+process. Publication filtering and the UTC selection still run on each request.
+A deploy/restart loads the new checkout; don't edit a running production container.
+Development reloads content each render. Failed loads are retried, not cached.
+
 `pnpm format` and `pnpm lint:fix` fix formatting and import order. See
 [publishing.md](publishing.md) for the GitHub upload workflow and form setup.
 

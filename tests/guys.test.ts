@@ -6,6 +6,7 @@ import { test } from "node:test"
 
 import sharp from "sharp"
 
+import { createCollectionLoader } from "../src/lib/collection-cache.ts"
 import { loadGuys } from "../src/lib/content.ts"
 import {
   guyOfTheDay,
@@ -21,6 +22,81 @@ const entry = {
   alt: "A little brown bear in a coat pocket.",
   publishedOn: "2026-09-22",
 }
+
+test("directory symlinks cannot redefine the allowed checkout boundary", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "lilguys-links-"))
+  try {
+    await mkdir(path.join(root, "content/guys"), { recursive: true })
+    await mkdir(path.join(root, "public"))
+    await mkdir(path.join(root, "outside/guys"), { recursive: true })
+    await symlink(
+      path.join(root, "outside/guys"),
+      path.join(root, "public/guys")
+    )
+    await assert.rejects(
+      loadGuys(root),
+      /public\/guys must not resolve through a symlink/
+    )
+    await rm(path.join(root, "public"), { recursive: true })
+    await symlink(path.join(root, "outside"), path.join(root, "public"))
+    await assert.rejects(
+      loadGuys(root),
+      /public\/guys must not resolve through a symlink/
+    )
+    await rm(path.join(root, "public"))
+    await mkdir(path.join(root, "public/guys"), { recursive: true })
+    await rm(path.join(root, "content/guys"), { recursive: true })
+    await symlink(
+      path.join(root, "outside/guys"),
+      path.join(root, "content/guys")
+    )
+    await assert.rejects(
+      loadGuys(root),
+      /content\/guys must not resolve through a symlink/
+    )
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test("production shares in-flight and completed content without freezing UTC publication", async () => {
+  let calls = 0
+  const future = { ...parseGuy("bear", entry), width: 24, height: 32 }
+  const get = createCollectionLoader(async () => {
+    calls++
+    return [future]
+  }, true)
+  const [a, b] = await Promise.all([get(), get()])
+  assert.equal(a, b)
+  assert.equal(await get(), a)
+  assert.equal(calls, 1)
+  assert.equal(guyOfTheDay(a, new Date("2026-09-21T23:59:59Z")), undefined)
+  assert.equal(
+    guyOfTheDay(await get(), new Date("2026-09-22T00:00:00Z"))?.slug,
+    "bear"
+  )
+  assert.equal(calls, 1)
+})
+
+test("development reads fresh content and rejected production loads can retry", async () => {
+  let calls = 0
+  const development = createCollectionLoader(async () => {
+    calls++
+    return []
+  }, false)
+  await development()
+  await development()
+  assert.equal(calls, 2)
+  let attempts = 0
+  const production = createCollectionLoader(async () => {
+    if (++attempts === 1) throw new Error("temporary read failure")
+    return []
+  }, true)
+  await assert.rejects(production(), /temporary read failure/)
+  assert.deepEqual(await production(), [])
+  await production()
+  assert.equal(attempts, 2)
+})
 
 test("validates real dates, image paths, required alt text, and safe attribution", () => {
   assert.equal(parseGuy("pocket-bear", entry).name, "Pocket Bear")

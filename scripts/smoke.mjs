@@ -29,21 +29,32 @@ if (root) {
     .png()
     .toFile(path.join(root, "public/guys/smoke-bear.png"))
 }
-const server = external
-  ? null
-  : spawn(process.execPath, ["server.js"], {
-      cwd: root,
-      stdio: "inherit",
-      env: {
-        ...process.env,
-        NODE_ENV: "production",
-        PORT: port,
-        HOSTNAME: "127.0.0.1",
-      },
-    })
-const exited = server ? once(server, "exit") : null
+const startServer = () =>
+  external
+    ? null
+    : spawn(process.execPath, ["server.js"], {
+        cwd: root,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          NODE_ENV: "production",
+          PORT: port,
+          HOSTNAME: "127.0.0.1",
+        },
+      })
+let server = startServer()
+let exited = server ? once(server, "exit") : null
 
-try {
+async function stopServer() {
+  if (server && server.exitCode === null) {
+    server.kill("SIGTERM")
+    const forceKill = globalThis.setTimeout(() => server.kill("SIGKILL"), 5000)
+    await exited
+    globalThis.clearTimeout(forceKill)
+  }
+}
+
+async function waitForServer() {
   let ready = false
   for (let attempt = 0; attempt < 60; attempt++) {
     if (server && server.exitCode !== null)
@@ -62,6 +73,17 @@ try {
     await setTimeout(500)
   }
   assert.ok(ready, "Production server becomes ready")
+}
+
+async function restartServer() {
+  await stopServer()
+  server = startServer()
+  exited = once(server, "exit")
+  await waitForServer()
+}
+
+try {
+  await waitForServer()
   const home = await fetch(base)
   assert.equal(home.status, 200)
   assert.equal(home.headers.get("x-powered-by"), null)
@@ -103,6 +125,7 @@ try {
     const entries = path.join(root, "content/guys")
     await rm(entries, { recursive: true })
     await mkdir(entries)
+    await restartServer()
     assert.match(
       await (await fetch(base)).text(),
       /Our first lilguy is on the way/
@@ -126,6 +149,8 @@ try {
         })
       )
     }
+    // A new deployment/process is required to replace cached Git content.
+    await restartServer()
     const detail = await (await fetch(`${base}/guys/smoke-bear`)).text()
     assert.match(detail, /A smoke test friend/)
     assert.match(detail, /Test credit/)
@@ -159,11 +184,6 @@ try {
   }
   console.log("Production smoke checks passed.")
 } finally {
-  if (server && server.exitCode === null) {
-    server.kill("SIGTERM")
-    const forceKill = globalThis.setTimeout(() => server.kill("SIGKILL"), 5000)
-    await exited
-    globalThis.clearTimeout(forceKill)
-  }
+  await stopServer()
   if (root) await rm(root, { recursive: true, force: true })
 }
