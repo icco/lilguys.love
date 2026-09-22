@@ -1,12 +1,13 @@
 {
-  "name": "nextjs-template",
+  "name": "lilguys.love",
   "version": "1.0.0",
-  "description": "A Next.js starter for icco projects.",
+  "description": "A little home for lil guys and the people who love them.",
   "private": true,
   "type": "module",
   "license": "MIT",
   "author": "Nat Welch <nat@natwelch.com>",
-  "repository": "https://github.com/icco/nextjs-template.git",
+  "repository": "https://github.com/icco/lilguys.love.git",
+  "homepage": "https://lilguys.love",
   "packageManager": "pnpm@11.2.2",
   "engines": {
     "node": ">=26"

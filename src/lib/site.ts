@@ -1,6 +1,6 @@
-// Customize this file when creating a site. Metadata routes are built from it.
+// Shared identity for page metadata, robots, and the sitemap.
 export const site = {
-  name: "Next.js starter",
-  description: "A small beginning for your next idea.",
-  url: "https://example.com",
+  name: "lil guys, big love",
+  description: "A little home for lil guys and the people who love them.",
+  url: "https://lilguys.love",
 } as const
