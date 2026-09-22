@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      next:
+        patterns: [next, eslint-config-next, "@next/*"]
+      react:
+        patterns: [react, react-dom, "@types/react", "@types/react-dom"]
+      tailwind:
+        patterns: [tailwindcss, "@tailwindcss/*", daisyui]
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
