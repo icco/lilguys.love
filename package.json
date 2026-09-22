@@ -14,20 +14,26 @@
   },
   "scripts": {
     "dev": "next dev -p 8080",
-    "build": "next build",
+    "build": "pnpm content:check && next build",
     "start": "node scripts/start.mjs",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "type-check": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm type-check && pnpm format:check",
+    "check": "pnpm lint && pnpm type-check && pnpm format:check && pnpm test && pnpm content:check",
+    "content:check": "node scripts/validate-content.ts",
+    "test": "node --test tests/*.test.ts",
     "test:smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@icco/react-common": "^2026.10919.1",
+    "@wrksz/themes": "^2.0.2",
     "next": "^16.3.6",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

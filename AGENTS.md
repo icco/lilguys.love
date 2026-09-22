@@ -6,6 +6,9 @@ Next.js App Router, React, strict TypeScript, Tailwind CSS, and daisyUI.
 - Routes live in `src/app/`; reusable components belong in `src/components/` and utilities in `src/lib/`.
 - Prefer Server Components; add `"use client"` only for browser APIs or interactivity.
 - Site identity and canonical origin live in `src/lib/site.ts`.
+- Entries live in `content/guys/*.json`, photos in `public/guys/`. See `docs/publishing.md`.
+- Publication and daily rotation use UTC. Keep page and sitemap date selection request-time.
+- `pnpm check` includes content validation and unit tests. `pnpm build` validates content too.
 - Use two spaces, double quotes, and no semicolons; Prettier sorts Tailwind classes and ESLint sorts imports.
 - Run `pnpm check`, `pnpm build`, and `pnpm test:smoke` before submitting changes.
 - Keep secrets server-side and out of git and Docker build arguments.

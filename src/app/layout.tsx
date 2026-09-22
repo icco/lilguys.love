@@ -1,6 +1,10 @@
 import "./globals.css"
 
+import { Footer } from "@icco/react-common/Footer"
+import { SiteHeader } from "@icco/react-common/SiteHeader"
+import { WebVitals } from "@icco/react-common/WebVitals"
 import type { Metadata } from "next"
+import Link from "next/link"
 import type { ReactNode } from "react"
 
 import { site } from "@/lib/site"
@@ -22,14 +26,41 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-base-100 font-sans text-base-content antialiased">
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:bg-base-100 focus:p-4"
-        >
+      <body>
+        <a href="#main" className="skip-link">
           Skip to content
         </a>
+        <div className="site-header">
+          <SiteHeader
+            brand={
+              <Link
+                href="/"
+                className="wordmark"
+                aria-label="lilguys.love home"
+              >
+                lilguys<span className="rose">.love</span>
+              </Link>
+            }
+            showThemeToggle={false}
+            links={[
+              { name: "Archive", href: "/archive" },
+              { name: "Submit a lilguy ↗", href: "/submit" },
+            ]}
+          />
+        </div>
+        <WebVitals analyticsPath="/analytics/lilguys" />
         {children}
+        <div className="shared-footer">
+          <p className="footer-note">
+            A little corner of the internet, for little friends.
+          </p>
+          <Footer
+            sourceRepo="https://github.com/icco/lilguys.love"
+            showSocial={false}
+            showRecurseRing={false}
+            showXXIIVVRing={false}
+          />
+        </div>
       </body>
     </html>
   )
