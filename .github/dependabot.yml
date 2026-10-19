@@ -7,7 +7,7 @@ updates:
     groups:
       npm:
         patterns:
-          - '*'
+          - "*"
     commit-message:
       prefix: chore(deps)
       prefix-development: chore(deps-dev)
@@ -24,7 +24,7 @@ updates:
     groups:
       docker:
         patterns:
-          - '*'
+          - "*"
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -36,4 +36,4 @@ updates:
     groups:
       github-actions:
         patterns:
-          - '*'
+          - "*"
