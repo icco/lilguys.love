@@ -1,12 +1,11 @@
 # Development
 
-Use Node 26 and pnpm 11.2.2.
+Use Node 26 and pnpm 12.16.1.
 
-`@icco/react-common` comes from GitHub Packages. Authenticate locally with a GitHub
-token that can read the package (never commit a token):
+`@icco/react-common` comes from GitHub Packages. pnpm only reads registry credentials from your user config, so store a token that can read the package there (never in the repo `.npmrc`):
 
 ```sh
-export NODE_AUTH_TOKEN="$(gh auth token)"
+pnpm config set //npm.pkg.github.com/:_authToken "$(gh auth token)"
 ```
 
 ```sh
