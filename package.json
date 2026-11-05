@@ -8,7 +8,7 @@
   "author": "Nat Welch <nat@natwelch.com>",
   "repository": "https://github.com/icco/lilguys.love.git",
   "homepage": "https://lilguys.love",
-  "packageManager": "pnpm@11.2.2",
+  "packageManager": "pnpm@12.16.1",
   "engines": {
     "node": ">=26"
   },
