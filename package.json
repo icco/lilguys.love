@@ -27,8 +27,7 @@
     "test:smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
-    "@heroicons/react": "^2.2.0",
-    "@icco/react-common": "^2026.11115.1",
+    "@icco/react-common": "^2026.11128.2",
     "@opentelemetry/api": "~1.10.0",
     "@vercel/otel": "^2.3.0",
     "next": "^16.4.6",
